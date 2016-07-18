@@ -1,0 +1,13 @@
+.idea/
+build/**
+logs/
+.gradle/2.5/
+.gradle/2.8/
+.gradle/2.9/
+.gradle/
+archive/
+src/main/webapp/WEB-INF/
+work/
+customer-service.iml
+out/
+settings.gradle

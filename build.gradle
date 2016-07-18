@@ -1,0 +1,85 @@
+group 'com.customer.service'
+version '1.0-SNAPSHOT'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'war'
+apply plugin: 'findbugs'
+apply plugin: 'checkstyle'
+apply plugin: 'pmd'
+apply plugin: 'jacoco'
+apply plugin: 'sonar-runner'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    maven { url "http://repo.maven.apache.org/maven2" }
+}
+
+dependencies {
+    compile fileTree(dir: 'jars', include: '*.jar')
+    compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
+    compile 'javax.servlet:javax.servlet-api:3.1.0'
+    compile 'org.glassfish.jersey.containers:jersey-container-servlet:2.22'
+    compile 'org.glassfish.jersey.media:jersey-media-json-jackson:2.22'
+    compile 'org.glassfish.jersey.ext:jersey-spring3:2.22'
+    compile 'org.glassfish.jersey.core:jersey-client:2.22'
+    compile 'ch.qos.logback:logback-classic:1.1.3'
+    compile 'ch.qos.logback:logback-access:1.1.3'
+    compile 'ch.qos.logback:logback-core:1.1.3'
+    compile 'org.slf4j:slf4j-api:1.7.12'
+    compile 'org.slf4j:jul-to-slf4j:1.7.12'
+    compile group: 'io.searchbox', name: 'jest', version: '2.0.2'
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.5.4'
+    compile 'io.swagger:swagger-jersey2-jaxrs:1.5.6'
+    compile 'org.codehaus.groovy:groovy:2.4.6'
+    compile 'org.mockito:mockito-core:1.10.19'
+
+    /* TODO check how to integrate Jersey with Spring 4 */
+    compile 'org.springframework:spring-beans:4.1.0.RELEASE'
+    compile 'org.springframework:spring-test:4.1.0.RELEASE'
+    compile 'org.springframework:spring-context:4.1.0.RELEASE'
+    compile 'org.springframework:spring-tx:4.1.0.RELEASE'
+    compile 'org.springframework:spring-jdbc:4.1.0.RELEASE'
+    compile 'org.springframework:spring-test:3.2.3.RELEASE'
+
+    compile 'javax:javaee-api:7.0'
+    testCompile 'javax:javaee-api:7.0'
+    providedCompile 'org.projectlombok:lombok:1.16.6'
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    checkstyle 'com.puppycrawl.tools:checkstyle:6.0', 'com.github.sevntu-checkstyle:dsm-maven-plugin:2.1.3'
+}
+
+test.dependsOn 'war'
+
+test {
+    //systemProperties 'property': 'value'
+    testLogging {
+        showStandardStreams = true
+        events "passed", "skipped", "failed", "standardOut", "standardError"
+    }
+}
+
+configurations.all {
+    // check for updates every build
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
+
+checkstyle {
+    toolVersion = "6.16"
+    configProperties = [samedir: "${rootDir}/config/checkstyle/"]
+}
+
+findbugs{
+    includeFilter = file("$rootProject.projectDir/config/findbugs/findbugsFilter.xml")
+}
